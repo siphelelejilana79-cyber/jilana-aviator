@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050805">
+<title>JILANA AI PRO — Aviator Analytics</title>
+<style>
+:root{--bg:#030603;--panel:#071007;--line:#173b17;--green:#55ff00;--green2:#8cff33;--muted:#8b9b8b;--white:#f4fff4;--red:#ff6470;--yellow:#ffd65a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 15%,#0c190c 0,#030603 42%,#010201 100%);color:var(--white);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+.wrap{max-width:720px;margin:auto;padding:14px 14px 28px}.brand{border-bottom:1px solid #154515;padding:10px 8px 18px;display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border:2px solid var(--green);border-radius:14px;display:grid;place-items:center;color:var(--green);font-weight:900;font-size:24px}.brand h1{font-size:21px;letter-spacing:2px;margin:0}.brand p{margin:4px 0 0;color:#aeb9ae;font-size:11px;letter-spacing:4px}
+.result{margin:24px auto 20px;width:min(86vw,430px);aspect-ratio:1;border:7px solid var(--green);border-radius:50%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:0 0 32px rgba(85,255,0,.18),inset 0 0 35px rgba(85,255,0,.06)}.label{color:var(--green2);font-weight:800;letter-spacing:2px;font-size:16px}.mult{font-size:clamp(54px,15vw,82px);font-weight:900;color:var(--green);line-height:1;margin:14px 0}.sub{color:#9ba89c;font-size:13px}
+.section-title{font-size:12px;letter-spacing:2px;font-weight:800;margin:20px 4px 9px;color:#dce8dc}.chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}.chip{border:1px solid #194a19;background:#061006;border-radius:9px;padding:8px 10px;font-weight:800;font-size:13px}.chip.low{color:var(--red)}.chip.high{color:var(--green2)}
+.card{border:1px solid #1d5a1d;border-radius:18px;background:rgba(4,12,4,.86);padding:16px;margin-top:18px}.field{margin-bottom:14px}.field label{display:block;font-size:12px;letter-spacing:1.5px;color:#d8e3d8;margin:0 0 7px;font-weight:800}input,select{width:100%;min-height:52px;border:1px solid #6d7d70;border-radius:12px;background:#030703;color:var(--white);font-size:17px;padding:0 15px;outline:none}input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(85,255,0,.12)}button{width:100%;min-height:52px;border:0;border-radius:13px;background:var(--green);color:#031003;font-size:15px;font-weight:900;letter-spacing:.7px;margin-top:9px;cursor:pointer}button.secondary{background:#0a120a;color:var(--green2);border:1px solid #235b23}.resultbox{margin-top:14px;border:1px solid #245b24;border-radius:14px;padding:14px;background:#061006}.status{font-weight:900;font-size:19px}.reason{color:#aeb9ae;font-size:13px;line-height:1.5;margin-top:6px}.disclaimer{font-size:10px;color:#738073;line-height:1.45;margin:16px 3px}.bar{height:9px;background:#101810;border-radius:99px;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;background:var(--green);width:50%;transition:width .25s}.tiny{font-size:11px;color:#7e8a7e}.history{max-height:180px;overflow:auto}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #102010;font-size:13px}.row:last-child{border:0}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="brand"><div class="logo">J</div><div><h1>JILANA AI PRO</h1><p>AVIATOR ANALYTICS</p></div></header>
+
+<section class="result" aria-live="polite">
+  <div class="label">CURRENT RESULT</div>
+  <div class="mult" id="current">5.03x</div>
+  <div class="sub" id="nextInfo">Analysis ready • local mode</div>
+</section>
+
+<div class="section-title">RECENT MULTIPLIERS</div>
+<div class="chips" id="chips"></div>
+
+<section class="card">
+  <div class="field">
+    <label for="crashTime">ROUND / CRASH TIME</label>
+    <input id="crashTime" type="time" value="20:10">
+  </div>
+  <div class="field">
+    <label for="last">LAST / LOSING MULTIPLIER</label>
+    <input id="last" inputmode="decimal" placeholder="e.g. 3.33" autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="history">RECENT HISTORY</label>
+    <input id="history" inputmode="decimal" placeholder="e.g. 1.39, 2.04, 5.03, 11.25" autocomplete="off">
+    <div class="tiny" style="margin-top:6px">Enter recent completed multipliers separated by commas.</div>
+  </div>
+  <button id="analyze" type="button">GENERATE ANALYSIS</button>
+  <button id="arm" class="secondary" type="button">ARM LOSING-PHASE TRACKER</button>
+  <div class="resultbox" id="analysis" hidden>
+    <div class="status" id="status"></div>
+    <div class="bar"><span id="bar"></span></div>
+    <div class="reason" id="reason"></div>
+  </div>
+</section>
+
+<button class="secondary" id="guide" type="button">HOW TO USE / GUIDE</button>
+<button id="next" type="button">NEXT ANALYSIS</button>
+
+<section class="card" id="historyCard" hidden>
+  <div class="section-title" style="margin-top:0">LOCAL SESSION HISTORY</div>
+  <div class="history" id="sessionHistory"></div>
+</section>
+
+<p class="disclaimer">Analytics only. Previous Aviator multipliers do not reliably determine the next round. This tool does not access the game server and does not guarantee or predict a winning result.</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const defaults=[5.03,2.04,1.39,40.04,20.60,11.05,11.25,1.41,1.98];
+let values=[...defaults], session=[], armed=false;
+
+function render(){
+  $("chips").innerHTML=values.slice(0,9).map(v=>`<span class="chip ${v<2?'low':'high'}">${v.toFixed(2)}x</span>`).join("");
+  $("current").textContent=(values[0]||5.03).toFixed(2)+"x";
+}
+function parseHistory(){
+  const raw=$("history").value.trim();
+  if(!raw)return values;
+  const parsed=raw.split(",").map(x=>Number(x.trim())).filter(x=>Number.isFinite(x)&&x>0&&x<=10000);
+  return parsed.length?parsed:values;
+}
+function analyze(){
+  const data=parseHistory();
+  values=data.slice(0,20);
+  const avg=data.reduce((a,b)=>a+b,0)/data.length;
+  const low=data.filter(x=>x<2).length;
+  const veryLow=data.filter(x=>x<1.5).length;
+  const recent=data.slice(0,5);
+  const recentAvg=recent.reduce((a,b)=>a+b,0)/recent.length;
+  let score=Math.max(0,Math.min(100,50 + (avg>5?12:-5) + (low>=3?10:low<=1?-8:0) + (recentAvg<2?8:-3)));
+  let label=score>=65?"HIGH VOLATILITY":"MODERATE";
+  if(score<40)label="LOW VOLATILITY";
+  $("status").textContent=label+" • "+Math.round(score)+"/100";
+  $("bar").style.width=Math.round(score)+"%";
+  $("reason").textContent=`Based on ${data.length} entered rounds: average ${avg.toFixed(2)}x, ${low} below 2.00x, and recent average ${recentAvg.toFixed(2)}x. This is a descriptive statistic, not a prediction of the next crash.`;
+  $("analysis").hidden=false;
+  const last=Number($("last").value);
+  if(Number.isFinite(last)&&last>0) $("nextInfo").textContent=`Last entered: ${last.toFixed(2)}x • ${armed?"tracker armed":"tracker ready"}`;
+  session.unshift({time:new Date().toLocaleTimeString(),label,score});
+  session=session.slice(0,12);
+  $("historyCard").hidden=false;
+  $("sessionHistory").innerHTML=session.map(x=>`<div class="row"><span>${x.time}</span><strong>${x.label} ${x.score}/100</strong></div>`).join("");
+  render();
+}
+$("analyze").addEventListener("click",analyze);
+$("arm").addEventListener("click",()=>{armed=!armed;$("arm").textContent=armed?"LOSING-PHASE TRACKER ARMED":"ARM LOSING-PHASE TRACKER";$("arm").style.borderColor=armed?"#55ff00":"#235b23";$("nextInfo").textContent=armed?"Tracker armed • enter each completed round":"Analysis ready • local mode"});
+$("next").addEventListener("click",()=>{analyze();window.scrollTo({top:0,behavior:"smooth"})});
+$("guide").addEventListener("click",()=>alert("1. Enter recent completed multipliers.\n2. Optionally enter the last/losing multiplier and round time.\n3. Tap GENERATE ANALYSIS.\n4. Use the result as descriptive statistics only — it is not a guaranteed next-round signal."));
+render();
+})();
+</script>
+</body>
+</html>
